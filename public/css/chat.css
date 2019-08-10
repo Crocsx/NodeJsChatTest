@@ -255,3 +255,7 @@ ul {
     border-bottom: solid 1px grey;
     display: inline-flex;
 }
+
+#send_location{
+    float:left;
+}

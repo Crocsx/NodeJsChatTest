@@ -22,10 +22,10 @@ io.on('connection', (socket) => {
     socket.on('USER:SEND_MESSAGE', (message) => {
         socket.broadcast.emit('SERVER:NEW_MESSAGE', message);
     })
-    
-    socket.on('USER:USER_LEAVE', (message) => {
-        socket.broadcast.emit('SERVER:USER_LEFT', message);
-    })    
+
+    socket.on('disconnect', (message) => {
+        io.emit('SERVER:USER_LEFT', message);
+    }) 
 });
 
 try {

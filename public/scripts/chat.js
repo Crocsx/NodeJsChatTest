@@ -18,13 +18,16 @@ window.addEventListener("load", () => {
     })
 });
 
-window.addEventListener("beforeunload", () => {
-    socket.emit('USER:USER_LEAVE', message);
-});
-
 document.getElementById('logout').onclick = () => {
     localStorage.removeItem('token');
     window.location.href = '/login';
+}
+
+document.getElementById('send_location').onclick = () => {
+    const message = document.getElementById('message').value;
+    socket.emit('USER:SEND_MESSAGE', message);
+    addMessage(message, true);
+    document.getElementById('message').value = '';
 }
 
 document.getElementById('send_message').onclick = () => {
