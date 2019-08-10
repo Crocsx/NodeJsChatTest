@@ -1,5 +1,7 @@
 import { Ajax } from '../libs/ajax.js'
 const ajax = new Ajax();
+const socket = io();
+const chatContainer = document.getElementById('chat');
 
 window.addEventListener("load", () => {
     ajax.headers = {
@@ -21,4 +23,56 @@ document.getElementById('logout').onclick = () => {
     window.location.href = '/login';
 }
 
-io();
+document.getElementById('send_message').onclick = () => {
+    const message = document.getElementById('message').value;
+    socket.emit('USER_SENT_MESSAGE', message);
+    addMessage(message, true);
+    document.getElementById('message').value = '';
+}
+
+socket.on('USER_JOIN', (event) => {
+    userJoin();
+})
+
+socket.on('NEW_MESSAGE', (message) => {
+    addMessage(message, false);
+})
+
+let userJoin = () => {
+    chatContainer.insertAdjacentHTML('beforeend', `
+        <li class="clearfix">
+            <div class="message-data align-center">
+                <span class="message-data-name" >User joined</span>
+            </div>
+        </li>
+    `);
+}
+
+let addMessage = (message, isSelf) => {
+    if(isSelf) {
+        chatContainer.insertAdjacentHTML('beforeend', `
+        <li class="clearfix">
+            <div class="message-data align-right">
+                <span class="message-data-time" >10:10 AM, Today</span> &nbsp; &nbsp;
+                <span class="message-data-name" >Me</span> <i class="fa fa-circle me"></i>
+            
+            </div>
+            <div class="message other-message float-right">
+                ${message}
+            </div>
+        </li>
+    `);
+    } else {
+        chatContainer.insertAdjacentHTML('beforeend', `
+        <li>
+            <div class="message-data">
+                <span class="message-data-name"><i class="fa fa-circle online"></i> Vincent</span>
+                <span class="message-data-time">10:12 AM, Today</span>
+            </div>
+            <div class="message my-message">
+                ${message}
+            </div>
+        </li>
+    `);   
+    }
+}

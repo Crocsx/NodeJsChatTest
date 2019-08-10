@@ -6,7 +6,6 @@ export class Ajax {
     } 
 
     send = (url, method, data) => {
-        console.log(this.headers)
         return fetch(url, {
             method: method, // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, cors, *same-origin

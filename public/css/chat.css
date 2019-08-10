@@ -222,6 +222,10 @@ body {
 	text-align: right;
 }
 
+.align-center {
+	text-align: center;
+}
+
 .float-right {
 	float: right;
 }
@@ -234,6 +238,11 @@ body {
 	clear: both;
 	height: 0;
 }
+
+ul {
+    list-style-type: none;
+}
+
 
 #logout{
     float: right;
