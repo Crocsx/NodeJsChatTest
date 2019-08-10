@@ -14,23 +14,24 @@ const port = Number(process.env.PORT);
 mongooseDB.setup();
 sendGrid.setup();
 
+// https://stackoverflow.com/questions/10058226/send-response-to-all-clients-except-sender
 io.on('connection', (socket) => {
-    console.log('new websocket Connection');
-    socket.emit('USER_JOIN');
+    console.log('New websocket Connection');
+    io.emit('SERVER:NEW_USER');
 
-    socket.on('USER_SENT_MESSAGE', (message) => {
-        console.log('new websocket Connection');
-        socket.emit('NEW_MESSAGE', message);
+    socket.on('USER:SEND_MESSAGE', (message) => {
+        socket.broadcast.emit('SERVER:NEW_MESSAGE', message);
     })
-})
-
-
-
+    
+    socket.on('USER:USER_LEAVE', (message) => {
+        socket.broadcast.emit('SERVER:USER_LEFT', message);
+    })    
+});
 
 try {
-server.listen(port, () => {
-    console.log(`Server is up on port ${port}`);
-})
+    server.listen(port, () => {
+        console.log(`Server is up on port ${port}`);
+    })
 } catch(e) {
     console.log(e);
 }

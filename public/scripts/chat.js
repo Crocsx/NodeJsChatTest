@@ -18,6 +18,10 @@ window.addEventListener("load", () => {
     })
 });
 
+window.addEventListener("beforeunload", () => {
+    socket.emit('USER:USER_LEAVE', message);
+});
+
 document.getElementById('logout').onclick = () => {
     localStorage.removeItem('token');
     window.location.href = '/login';
@@ -25,24 +29,29 @@ document.getElementById('logout').onclick = () => {
 
 document.getElementById('send_message').onclick = () => {
     const message = document.getElementById('message').value;
-    socket.emit('USER_SENT_MESSAGE', message);
+    socket.emit('USER:SEND_MESSAGE', message);
     addMessage(message, true);
     document.getElementById('message').value = '';
 }
 
-socket.on('USER_JOIN', (event) => {
-    userJoin();
+socket.on('SERVER:NEW_USER', (event) => {
+    userNotification(true);
 })
 
-socket.on('NEW_MESSAGE', (message) => {
+socket.on('SERVER:USER_LEFT', () => {
+    userNotification(false);
+})
+
+socket.on('SERVER:NEW_MESSAGE', (message) => {
     addMessage(message, false);
 })
 
-let userJoin = () => {
+
+let userNotification = (isJoin) => {
     chatContainer.insertAdjacentHTML('beforeend', `
         <li class="clearfix">
             <div class="message-data align-center">
-                <span class="message-data-name" >User joined</span>
+                <span class="message-data-name" >${isJoin ? 'User Joined' : ' User Left'}</span>
             </div>
         </li>
     `);
