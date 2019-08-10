@@ -4,32 +4,16 @@ import socketio from 'socket.io';
 import app from './express/main';
 import * as mongooseDB from './db/main';
 import * as sendGrid from './emails/main';
-let Filter = require('bad-words');
+import * as socketIO from './socket-io/main';
 
 const server = http.createServer(app);
 const io = socketio(server);
 const port = Number(process.env.PORT);
 
-mongooseDB.setup();
-sendGrid.setup();
-
-// https://stackoverflow.com/questions/10058226/send-response-to-all-clients-except-sender
-io.on('connection', (socket) => {
-    console.log('New websocket Connection');
-    io.emit('SERVER:NEW_USER');
-
-    socket.on('USER:SEND_MESSAGE', (message, callback) => {
-        const filter = new Filter({ placeHolder: '*'});
-        socket.broadcast.emit('SERVER:NEW_MESSAGE', filter.clean(message));
-        callback(filter.clean(message));
-    })
-
-    socket.on('disconnect', (message) => {
-        io.emit('SERVER:USER_LEFT', message);
-    }) 
-});
-
 try {
+    mongooseDB.setup();
+    sendGrid.setup();
+    socketIO.setup(io);
     server.listen(port, () => {
         console.log(`Server is up on port ${port}`);
     })
