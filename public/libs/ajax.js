@@ -14,7 +14,12 @@ export class Ajax {
             referrer: 'no-referrer', // no-referrer, *client
             body: (method === 'POST') ? JSON.stringify(data) : null, // body data type must match "Content-Type" header
         })
-        .then(response => response.json()); // parses JSON response into native JavaScript objects 
+        .then(response => {
+            if (!response.ok) {
+                throw Error(response);
+            }
+            return response.json();
+        });
     }
     
     post = (url, data) => {

@@ -12,8 +12,15 @@ app.use(
     Routers.UserRouter,
     express.static(publicDirectoryPath)
 );
+
+app.get('/chat', (req, res) => {
+    res.render('chat');
+});
+
 app.get('/*', (req, res) => {
     res.render('login');
 });
+
+
 
 export default app;

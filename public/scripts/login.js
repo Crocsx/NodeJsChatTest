@@ -8,25 +8,33 @@ document.getElementById('signup').onclick = () => {
 	const username = document.getElementById('signup_name').value;
 	const email = document.getElementById('signup_mail').value;
 	const password = document.getElementById('signup_password').value;
-
+	const errorDiv = document.getElementById('signup_error');
 	if(username && email && password){
 		ajax.post('http://localhost:3000/user/signup', {
 			username,
 			password,
 			email
-		})
+		}).then((response) => {
+			localStorage.setItem('token', response.token);
+			window.location.href = '/chat';
+		}).catch(response => errorDiv.innerHTML = "Invalid fields")
+	} else {
+		errorDiv.innerHTML = 'Please fullfil all fields';
 	}
 }
 
 document.getElementById('login').onclick = () => {
 	const username = document.getElementById('login_name').value;
 	const password = document.getElementById('login_password').value;
-
+	const errorDiv = document.getElementById('login_error');
 	if(username && password){
 		ajax.post('http://localhost:3000/user/login', {
 			username,
 			password
-		})
+		}).then((response) => {
+			localStorage.setItem('token', response.token);
+			window.location.href = '/chat'		
+		}).catch(response => errorDiv.innerHTML = "Invalid credentials")
 	}
 }
 
