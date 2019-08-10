@@ -1,7 +1,7 @@
 {
-  "name": "NodeJsChat",
+  "name": "NodeJsChatTest",
   "version": "1.0.0",
-  "description": "NodeJsChat",
+  "description": "NodeJsChatTest",
   "main": "./build/app/main.js",
   "dependencies": {
     "@sendgrid/mail": "^6.4.0",
@@ -42,12 +42,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Crocsx/NodeJsChat.git"
+    "url": "git+https://github.com/Crocsx/NodeJsChatTest.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Crocsx/NodeJsChat/issues"
+    "url": "https://github.com/Crocsx/NodeJsChatTest/issues"
   },
-  "homepage": "https://github.com/Crocsx/NodeJsChat#readme"
+  "homepage": "https://github.com/Crocsx/NodeJsChatTest#readme"
 }
