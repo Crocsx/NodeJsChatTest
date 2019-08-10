@@ -4,9 +4,10 @@
         <link rel="stylesheet" href="/css/chat.css">
     </head>
     <body>
+        <div id="user_info">Connected </div>
         <div class="chat">
             <div class="chat-history">
-                <ul>
+{{!--                 <ul>
                     <li class="clearfix">
                         <div class="message-data align-right">
                         <span class="message-data-time" >10:10 AM, Today</span> &nbsp; &nbsp;
@@ -17,7 +18,7 @@
                         Hi Vincent, how are you? How is the project coming along?
                         </div>
                     </li>
-                </ul>
+                </ul> --}}
             </div>
             <div class="chat-message clearfix">
                 <textarea name="message-to-send" id="message-to-send" placeholder ="Type your message" rows="3"></textarea>   
@@ -27,6 +28,7 @@
             </div>
         </div>
         <script src="/socket.io/socket.io.js"></script>
-        <script src="/scripts/chat.js"></script>
+        <script type="module" src="/libs/ajax.js"></script>
+        <script type="module" src="/scripts/chat.js"></script>
     </body>
 </html>
