@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../app/app';
+import app from '../app/express/main';
 import { User } from '../app/models/user.model'
 import * as TestDB from './fixtures/db';
 

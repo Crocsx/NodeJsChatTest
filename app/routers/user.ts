@@ -2,7 +2,7 @@ import multer from 'multer';
 import express, { Router } from 'express';
 import * as Models from '../models/index';
 import * as MiddleWare from '../middleware/index';
-import * as sendGrid from '../emails/account';
+import * as sendGrid from '../emails/main';
 import sharp from 'sharp';
 import { IUser } from '../models/index';
 

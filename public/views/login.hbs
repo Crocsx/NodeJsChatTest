@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/css/login.css">
+    </head>
+    <body>
+        <div class="form-structor">
+            <div class="signup">
+                <h2 class="form-title" id="go_signup"><span>or</span>Sign up</h2>
+                <div class="form-holder">
+                    <input id="signup_name" type="text" class="input" placeholder="Name" />
+                    <input id="signup_mail" type="email" class="input" placeholder="Email" />
+                    <input id="signup_password" type="password" class="input" placeholder="Password" />
+                    {{!-- <div>{{error}}</div> --}}
+                </div>
+                <button id="signup" class="submit-btn">Sign up</button>
+            </div>
+            <div class="login slide-up">
+                <div class="center">
+                    <h2 class="form-title" id="go_login"><span>or</span>Log in</h2>
+                    <div class="form-holder">
+                        <input id="login_name" type="email" class="input" placeholder="Email" />
+                        <input id="login_password" type="password" class="input" placeholder="Password" />
+                    </div>
+                    <button id="login" class="submit-btn">Log in</button>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="/libs/ajax.js"></script>
+        <script type="module" src="/scripts/login.js"></script>
+    </body>
+</html>
