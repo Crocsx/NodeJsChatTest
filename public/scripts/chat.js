@@ -24,17 +24,23 @@ document.getElementById('logout').onclick = () => {
 }
 
 document.getElementById('send_location').onclick = () => {
-    const message = document.getElementById('message').value;
+    if(!navigator.geolocation) { return alert('method unavailable'); }
+
+    navigator.geolocation.getCurrentPosition((position) => {
+        console.log(position)
+    })
+/*     const message = document.getElementById('message').value;
     socket.emit('USER:SEND_MESSAGE', message);
     addMessage(message, true);
-    document.getElementById('message').value = '';
+    document.getElementById('message').value = ''; */
 }
 
 document.getElementById('send_message').onclick = () => {
     const message = document.getElementById('message').value;
-    socket.emit('USER:SEND_MESSAGE', message);
-    addMessage(message, true);
-    document.getElementById('message').value = '';
+    socket.emit('USER:SEND_MESSAGE', message, (message) => {
+        addMessage(message, true);
+        document.getElementById('message').value = '';
+    });
 }
 
 socket.on('SERVER:NEW_USER', (event) => {

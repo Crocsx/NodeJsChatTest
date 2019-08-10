@@ -1,9 +1,9 @@
 import { IConfig } from '../models/config.model'
 
 declare global {
-    namespace NodeJS {
-      interface Global {
-          config: IConfig
-      }
+  namespace NodeJS {
+    interface Global {
+      config: IConfig
     }
   }
+}

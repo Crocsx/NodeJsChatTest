@@ -4,8 +4,7 @@ import socketio from 'socket.io';
 import app from './express/main';
 import * as mongooseDB from './db/main';
 import * as sendGrid from './emails/main';
-
-
+let Filter = require('bad-words');
 
 const server = http.createServer(app);
 const io = socketio(server);
@@ -19,8 +18,10 @@ io.on('connection', (socket) => {
     console.log('New websocket Connection');
     io.emit('SERVER:NEW_USER');
 
-    socket.on('USER:SEND_MESSAGE', (message) => {
-        socket.broadcast.emit('SERVER:NEW_MESSAGE', message);
+    socket.on('USER:SEND_MESSAGE', (message, callback) => {
+        const filter = new Filter({ placeHolder: '*'});
+        socket.broadcast.emit('SERVER:NEW_MESSAGE', filter.clean(message));
+        callback(filter.clean(message));
     })
 
     socket.on('disconnect', (message) => {
