@@ -234,3 +234,15 @@ body {
 	clear: both;
 	height: 0;
 }
+
+#logout{
+    float: right;
+    margin-left: auto;
+    cursor: pointer;
+}
+
+.header{
+    width: 100%;
+    border-bottom: solid 1px grey;
+    display: inline-flex;
+}

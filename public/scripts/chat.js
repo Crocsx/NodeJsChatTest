@@ -16,4 +16,9 @@ window.addEventListener("load", () => {
     })
 });
 
+document.getElementById('logout').onclick = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+}
+
 io();
