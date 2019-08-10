@@ -22,7 +22,6 @@ $locationButton.onclick = () => {
 
 
 $messageTextArea.addEventListener('keyup',function(e){
-    console.log($messageTextArea.value)
     if(!$messageTextArea.value) { return; }
     if (e.keyCode === 13) {
         socket.emit('USER:SEND_MESSAGE', $messageTextArea.value, (message) => {
@@ -42,35 +41,28 @@ $messageButton.onclick = () => {
     });
 }
 
-let userNotification = (isJoin) => {
-    $chat.insertAdjacentHTML('beforeend', `
-        <li class="clearfix">
-            <div class="message-data align-center">
-                <span class="message-data-name" >${isJoin ? 'User Joined' : ' User Left'}</span>
-            </div>
-        </li>
-    `);
+let userNotification = (isJoin) => {        
+    $chat.insertAdjacentHTML('beforeend', Handlebars.templates['chat-event']({
+        event : isJoin ? 'User Joined' : ' User Left'
+    }));
 }
 
 let addMessage = (response) => {
     const time = new Date(response.timestamp);
     const selfMessage = response.user === 'Me';
-    $chat.insertAdjacentHTML('beforeend', `
-        <li class="clearfix">
-            <div class="message-data ${selfMessage ? 'align-right' : ''}">
-                ${selfMessage ? 
-                    `<span class="message-data-time" >${time.getHours() + ":" + (time.getMinutes() < 10? '0': '') + time.getMinutes()}</span> &nbsp; &nbsp;
-                    <span class="message-data-name" >${response.user}</span> <i class="fa fa-circle me"></i>` 
-                : `                
-                    <span class="message-data-name"><i class="fa fa-circle online"></i> ${response.user}</span>
-                    <span class="message-data-time">${time.getHours() + ":"+ (time.getMinutes() < 10? '0': '') + time.getMinutes()}</span>
-                `}  
-            </div>
-            <div class="message ${selfMessage ? 'other-message float-right' : 'my-message'}">
-                ${response.message}
-            </div>
-        </li>
-    `);
+    if(selfMessage) {
+        $chat.insertAdjacentHTML('beforeend', Handlebars.templates['self-message']({
+            time : time.getHours() + ":"+ (time.getMinutes() < 10? '0': '') + time.getMinutes(),
+            user: response.user,
+            message: response.message
+        }));
+    } else {
+        $chat.insertAdjacentHTML('beforeend', Handlebars.templates['other-message']({
+            time : time.getHours() + ":"+ (time.getMinutes() < 10? '0': '') + time.getMinutes(),
+            user: response.user,
+            message: response.message
+        }));
+    }
 }
 
 window.addEventListener("load", () => {

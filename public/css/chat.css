@@ -149,15 +149,15 @@ body {
 	margin-left: -10px;
 }
 
-.chat .chat-history .my-message {
+.chat .chat-history .other-message {
 	background: #86BB71;
 }
 
-.chat .chat-history .other-message {
+.chat .chat-history .my-message {
 	background: #94C2ED;
 }
 
-.chat .chat-history .other-message:after {
+.chat .chat-history .my-message:after {
 	border-bottom-color: #94C2ED;
 	left: 93%;
 }
@@ -240,7 +240,9 @@ body {
 }
 
 ul {
-    list-style-type: none;
+	list-style-type: none;
+	padding: 0px;
+    margin: 0px;
 }
 
 
