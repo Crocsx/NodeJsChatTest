@@ -4,6 +4,13 @@
         <span class="message-data-time">{{time}}</span>
     </div>
     <div class="message other-message">
-       {{message}}
+        {{#switch type}} 
+            {{#case 'LOCATION'}} 
+                <iframe src={{content}}></iframe>
+            {{/case}} 
+            {{#case 'MESSAGE'}}
+                {{content}}
+            {{/case}} 
+        {{/switch}}
     </div>
 </li>

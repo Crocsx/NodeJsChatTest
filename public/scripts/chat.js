@@ -16,7 +16,11 @@ $locationButton.onclick = () => {
     if(!navigator.geolocation) { return alert('method unavailable'); }
     $locationButton.setAttribute('disabled', 'disabled');
     navigator.geolocation.getCurrentPosition((position) => {
+        let val = position;
         $locationButton.removeAttribute('disabled');
+        socket.emit('USER:SEND_LOCATION', val, (response) => {
+            addMessage(response);
+        });
     })
 }
 
@@ -54,13 +58,15 @@ let addMessage = (response) => {
         $chat.insertAdjacentHTML('beforeend', Handlebars.templates['self-message']({
             time : time.getHours() + ":"+ (time.getMinutes() < 10? '0': '') + time.getMinutes(),
             user: response.user,
-            message: response.message
+            content: response.content,
+            type : response.type
         }));
     } else {
         $chat.insertAdjacentHTML('beforeend', Handlebars.templates['other-message']({
             time : time.getHours() + ":"+ (time.getMinutes() < 10? '0': '') + time.getMinutes(),
             user: response.user,
-            message: response.message
+            content: response.content,
+            type : response.type
         }));
     }
 }
@@ -90,6 +96,10 @@ let addSocketEvent = () => {
     });
     
     socket.on('SERVER:NEW_MESSAGE', (response) => {
+        addMessage(response);
+    });
+
+    socket.on('SERVER:NEW_LOCATION', (response) => {
         addMessage(response);
     });
 };

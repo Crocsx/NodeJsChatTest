@@ -4,6 +4,13 @@
         <span class="message-data-name" >{{user}}</span> <i class="fa fa-circle me"></i>
     </div>
     <div class="message my-message float-right">
-       {{message}}
+        {{#switch type}} 
+            {{#case 'LOCATION'}} 
+                <iframe src={{content}}></iframe>
+            {{/case}} 
+            {{#case 'MESSAGE'}}
+                {{content}}
+            {{/case}} 
+        {{/switch}}
     </div>
 </li>

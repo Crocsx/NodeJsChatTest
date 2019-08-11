@@ -43,7 +43,7 @@
     "build": "tsc",
     "test": "./node_modules/.bin/env-cmd -f ./config/test.env jest --watch --runInBand",
     "postinstall": "npm run build",
-    "hbs": "handlebars ./public/templates/views -f ./public/templates/view.js --extension 'hbs' && npx handlebars ./public/templates/partials -f ./public/templates/partials.js --extension 'hbs'",
+    "hbs": "handlebars -m ./public/templates/views -f ./public/templates/view.js -k customhelpers.js --extension hbs  && handlebars -m ./public/templates/partials -f ./public/templates/partials.js -k customhelpers.js --extension hbs",
     "local": "./node_modules/.bin/env-cmd -f ./config/dev.env tsnd --respawn app/main.ts --experimental-modules"
   },
   "repository": {
