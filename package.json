@@ -17,6 +17,7 @@
     "sharp": "^0.22.1",
     "socket.io": "^2.2.0",
     "typescript": "^3.5.3",
+    "env-cmd": "^9.0.3",
     "validator": "^11.1.0"
   },
   "devDependencies": {
@@ -32,14 +33,13 @@
     "@types/sharp": "^0.22.2",
     "@types/supertest": "^2.0.8",
     "@types/validator": "^10.11.1",
-    "env-cmd": "^9.0.3",
     "jest": "^24.8.0",
     "supertest": "^4.0.2",
     "ts-jest": "^24.0.2",
     "ts-node-dev": "^1.0.0-pre.40"
   },
   "scripts": {
-    "start": "node ./build/app/main.js",
+    "start": "./node_modules/.bin/env-cmd -f ./config/prod.env node ./build/app/main.js",
     "build": "tsc",
     "test": "./node_modules/.bin/env-cmd -f ./config/test.env jest --watch --runInBand",
     "postinstall": "npm run build",
