@@ -1,0 +1,11 @@
+{{#each rooms}}
+    <li class="clearfix" onclick="window.chat.selectRoom(`{{this}}`)">
+        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_02.jpg" alt="avatar" />
+        <div class="about">
+            <div class="name">{{this}}</div>
+            <div class="status">
+                <i class="fa fa-circle">last message</i>
+            </div>
+        </div>
+    </li>
+{{/each}}

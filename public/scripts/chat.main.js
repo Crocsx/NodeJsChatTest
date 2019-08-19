@@ -1,0 +1,61 @@
+import { Ajax } from '../libs/ajax.js'
+import { Chat } from './chat.js'
+
+const ajax = new Ajax();
+
+const $messageTextArea = document.getElementById('message');
+const $locationButton = document.getElementById('send_location');
+const $messageButton = document.getElementById('send_message');
+const $joinRoom = document.getElementById('join_room');
+
+
+window.addEventListener("load", () => {
+    ajax.headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Request-Headers': 'x-requested-with',
+        'Authorization' : 'Bearer '+ localStorage.getItem('token')
+    } 
+    ajax.get('http://localhost:3000/user/me')
+    .then((response) => {
+        document.getElementById('user_info').innerHTML = `Connected as ${response.username}`;
+        window.chat = new Chat(document.getElementById('chat_container'), document.getElementById('room_list'));
+    }).catch((reponse) => {
+        console.log(reponse)
+        /* window.location.href = '/login'; */
+    })
+});
+
+document.getElementById('logout').onclick = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+}
+
+$joinRoom.addEventListener('keyup', function(e){
+    if (e.keyCode === 13) {
+        chat.joinRoom($joinRoom.value);
+    }
+});
+
+$locationButton.onclick = () => {
+    $locationButton.setAttribute('disabled', 'disabled');
+    chat.sendLocation().then((location) => {
+        $locationButton.removeAttribute('disabled');
+    });
+}
+
+$messageTextArea.addEventListener('keyup',function(e){
+    if(!$messageTextArea.value || e.keyCode !== 13) { return; }
+    chat.sendMessage($messageTextArea.value).then((message) => {
+        $messageTextArea.value = '';
+    });
+});
+
+$messageButton.onclick = () => {
+    $messageButton.setAttribute('disabled', 'disabled');
+    if(!$messageTextArea.value) { return; }
+    chat.sendMessage($messageTextArea.value).then((message) => {
+        $messageButton.removeAttribute('disabled');
+        $messageTextArea.value = '';
+    });
+} 
+

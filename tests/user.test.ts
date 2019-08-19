@@ -41,6 +41,32 @@ test('Not authentificate user cant get self', async () => {
         .expect(401);
 });
 
+test('Should join a room', async () => {
+    
+    await request(app).get('/user/me/join')
+        .set('Authorization', `Bearer 123`)
+        .send({
+            room : 'my new room'
+        })
+        .expect(401);
+});
+
+test('Should leave a room', async () => {
+    await request(app).get('/user/me/join')
+        .set('Authorization', `Bearer 123`)
+        .send({
+            room : 'my new room'
+        })
+        .expect(200);
+
+    await request(app).get('/user/me/leave')
+        .set('Authorization', `Bearer ${TestDB.testUser1.tokens[0].token}`)
+        .send({
+            room : 'my new room'
+        })
+        .expect(200);
+});
+
 test('Should delete self', async () => {
     await request(app).delete('/user/me')
         .set('Authorization', `Bearer ${TestDB.testUser1.tokens[0].token}`)

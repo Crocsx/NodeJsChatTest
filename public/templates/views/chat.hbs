@@ -4,30 +4,53 @@
         <link rel="stylesheet" href="/css/chat.css">
     </head>
     <body>
-        <div class="chat">
-            <div class="header">
-                <div id="user_info"></div>
-                <div id="logout">logout</div>
-            </div>
-
-            <div class="chat-history">
-                <ul id="chat">
-                    
+        <div class="container clearfix">
+            <div class="room-list">
+                <div class="search">
+                    <input type="text" placeholder="search" />
+                    <i class="fa fa-search"></i>
+                </div>
+                <ul class="list" id="room_list">
+                    {{!-- {{>chat-room room}} --}}
                 </ul>
+                <div class="search">
+                    <input type="text" id="join_room" placeholder="Join Room" />
+                    <i class="fa fa-add"></i>
+                </div>
             </div>
-            <div class="chat-message clearfix">
-                <textarea name="message-to-send" id="message" placeholder ="Type your message" rows="3"></textarea>   
-                <i class="fa fa-file-o"></i> &nbsp;&nbsp;&nbsp;
-                <i class="fa fa-file-image-o"></i>
-                <button id="send_location">Share Location</button>
-                <button id="send_message">Send</button>
+            <div class="chat">
+                <div class="header">
+                    <div id="user_info"></div>
+                    <div id="logout">logout</div>
+                </div>
+   
+                    <div class="chat-history">
+                        <ul id="chat_container">
+                        {{#if chat.currentRoom}}
+                        {{else}}
+                            <div>
+                                Please join a room
+                            </div>
+                        {{/if}}  
+                        </ul>
+                    </div>
+                    <div class="chat-message clearfix">
+                        <textarea name="message-to-send" id="message" placeholder ="Type your message" rows="3"></textarea>   
+                        <i class="fa fa-file-o"></i> &nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-file-image-o"></i>
+                        <button id="send_location">Share Location</button>
+                        <button id="send_message">Send</button>
+                    </div>
+
             </div>
         </div>
+        <script src="https://unpkg.com/rxjs/bundles/rxjs.umd.min.js"></script>
         <script src="http://builds.handlebarsjs.com.s3.amazonaws.com/handlebars-3ce4425.js"></script>
         <script src="/templates/helpers/helpers.js"></script>
         <script src="/templates/partials.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script type="module" src="/libs/ajax.js"></script>
         <script type="module" src="/scripts/chat.js"></script>
+        <script type="module" src="/scripts/chat.main.js"></script>
     </body>
 </html>

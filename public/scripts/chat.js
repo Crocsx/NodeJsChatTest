@@ -1,105 +1,119 @@
-import { Ajax } from '../libs/ajax.js'
-const ajax = new Ajax();
-const socket = io();
+export class Chat {
 
-const $chat = document.getElementById('chat');
-const $messageTextArea = document.getElementById('message');
-const $locationButton = document.getElementById('send_location');
-const $messageButton = document.getElementById('send_message');
-
-document.getElementById('logout').onclick = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
-}
-
-$locationButton.onclick = () => {
-    if(!navigator.geolocation) { return alert('method unavailable'); }
-    $locationButton.setAttribute('disabled', 'disabled');
-    navigator.geolocation.getCurrentPosition((position) => {
-        let val = position;
-        $locationButton.removeAttribute('disabled');
-        socket.emit('USER:SEND_LOCATION', val, (response) => {
-            addMessage(response);
-        });
-    })
-}
-
-
-$messageTextArea.addEventListener('keyup',function(e){
-    if(!$messageTextArea.value) { return; }
-    if (e.keyCode === 13) {
-        socket.emit('USER:SEND_MESSAGE', $messageTextArea.value, (message) => {
-            addMessage(message);
-            $messageTextArea.value = '';
-        });
+    constructor(messageContainer, roomsContainer) {
+        this._rooms = new Array();
+        this._currentRoom = null;
+        this._$messages = messageContainer;
+        this._$rooms = roomsContainer;
+        this._addEvents();
     }
-});
 
-$messageButton.onclick = () => {
-    $messageButton.setAttribute('disabled', 'disabled');
-    if($messageTextArea.value) { return; }
-    socket.emit('USER:SEND_MESSAGE', $messageTextArea.value, (response) => {
-        $messageButton.removeAttribute('disabled');
-        addMessage(response);
-        $messageTextArea.value = '';
-    });
-}
+    _addEvents = () => {
+        this.socket = io();
 
-let userNotification = (isJoin) => {        
-    $chat.insertAdjacentHTML('beforeend', Handlebars.templates['chat-event']({
-        event : isJoin ? 'User Joined' : ' User Left'
-    }));
-}
+        this.socket.on('SERVER:NEW_USER', (event) => {
+            this._addNotification(true);
+        });
+        
+        this.socket.on('SERVER:USER_LEFT', () => {
+            this._addNotification(false);
+        });
+        
+        this.socket.on('SERVER:NEW_MESSAGE', (response) => {
+            this._addMessage(response);
+        });
+    
+        this.socket.on('SERVER:NEW_LOCATION', (response) => {
+            this._addMessage(response);
+        });
+    };
 
-let addMessage = (response) => {
-    const time = new Date(response.timestamp);
-    const selfMessage = response.user === 'Me';
-    if(selfMessage) {
-        $chat.insertAdjacentHTML('beforeend', Handlebars.templates['self-message']({
-            time : time.getHours() + ":"+ (time.getMinutes() < 10? '0': '') + time.getMinutes(),
-            user: response.user,
-            content: response.content,
-            type : response.type
-        }));
-    } else {
-        $chat.insertAdjacentHTML('beforeend', Handlebars.templates['other-message']({
-            time : time.getHours() + ":"+ (time.getMinutes() < 10? '0': '') + time.getMinutes(),
-            user: response.user,
-            content: response.content,
-            type : response.type
+    _addMessage = ({timestamp, user, content, type}) => {
+        const time = new Date(timestamp);
+        const selfMessage = user === 'Me';
+        if(selfMessage) {
+            this.$container.insertAdjacentHTML('beforeend', Handlebars.templates['self-message']({
+                time : time.getHours() + ":"+ (time.getMinutes() < 10? '0': '') + time.getMinutes(),
+                user: user,
+                content: content,
+                type : type
+            }));
+        } else {
+            this.$container.insertAdjacentHTML('beforeend', Handlebars.templates['other-message']({
+                time : time.getHours() + ":"+ (time.getMinutes() < 10? '0': '') + time.getMinutes(),
+                user: user,
+                content: content,
+                type : type
+            }));
+        }
+    }
+
+    _addNotification = (isJoin) => {
+        if(!this._currentRoom) return;      
+        this.$container.insertAdjacentHTML('beforeend', Handlebars.templates['chat-event']({
+            event : isJoin ? 'User Joined' : ' User Left'
         }));
     }
+
+    _refreshRooms = () => {
+        while (this._$rooms.firstChild) {
+            this._$rooms.removeChild(this._$rooms.firstChild);
+        }
+        this._$rooms.insertAdjacentHTML('afterbegin', Handlebars.templates['room-list']({
+            rooms : this._rooms
+        }));
+    }
+
+    _refreshChat = () => {
+/*         while (this._$rooms.firstChild) {
+            this._$rooms.removeChild(this._$rooms.firstChild);
+        }
+        this._$rooms.insertAdjacentHTML('afterbegin', Handlebars.templates['room-list']({
+            rooms : this._rooms
+        })); */
+    }
+
+    joinRoom = (room) => {
+        this._rooms.push(room);
+        this._currentRoom = room;   
+        this._refreshRooms();    
+    }
+
+    leaveRoom = (room) => {
+        this._rooms = this.rooms.filter((r) => r !== room );
+        this._refreshRooms();    
+    }
+
+    selectRoom = (room) => {
+        console.log(room)
+        this._currentRoom = room;
+    }
+
+    sendLocation = () => {
+        return new Promise((resolve, reject) => {
+            if(!this._currentRoom){
+                return reject();
+            }
+            if(!navigator.geolocation) { return reject('method unavailable'); }
+            navigator.geolocation.getCurrentPosition((position) => {
+                let val = position;
+                this.socket.emit('USER:SEND_LOCATION', val, (response) => {
+                    this._addMessage(response);
+                    resolve();
+                });
+            })
+        })
+    }
+
+    sendMessage = (message) => {
+        return new Promise((resolve, reject) => {
+            if(!this._currentRoom){
+                return reject();
+            }
+            this.socket.emit('USER:SEND_MESSAGE', message, (message) => {
+                this._addMessage(message);
+                resolve(message);
+            });
+        })
+    }
 }
-
-window.addEventListener("load", () => {
-    ajax.headers = {
-        'Content-Type': 'application/json',
-        'Access-Control-Request-Headers': 'x-requested-with',
-        'Authorization' : 'Bearer '+ localStorage.getItem('token')
-    } 
-    ajax.get('http://localhost:3000/user/me')
-    .then((response) => {
-        document.getElementById('user_info').innerHTML = `Connected as ${response.username}`;
-        addSocketEvent();
-    }).catch((reponse) => {
-        window.location.href = '/login';
-    })
-});
-
-let addSocketEvent = () => {
-    socket.on('SERVER:NEW_USER', (event) => {
-        userNotification(true);
-    });
-    
-    socket.on('SERVER:USER_LEFT', () => {
-        userNotification(false);
-    });
-    
-    socket.on('SERVER:NEW_MESSAGE', (response) => {
-        addMessage(response);
-    });
-
-    socket.on('SERVER:NEW_LOCATION', (response) => {
-        addMessage(response);
-    });
-};

@@ -18,16 +18,19 @@ body {
 	border-radius: 5px;
 }
 
-.people-list {
+.room-list {
 	width: 260px;
 	float: left;
+	height: 778px;
+    display: flex;
+    flex-direction: column;
 }
 
-.people-list .search {
+.room-list .search {
 	padding: 20px;
 }
 
-.people-list input {
+.room-list input {
 	border-radius: 3px;
 	border: none;
 	padding: 14px;
@@ -37,34 +40,34 @@ body {
 	font-size: 14px;
 }
 
-.people-list .fa-search {
+.room-list .fa-search {
 	position: relative;
 	left: -25px;
 }
 
-.people-list ul {
+.room-list ul {
 	padding: 20px;
 	height: 770px;
 }
 
-.people-list ul li {
+.room-list ul li {
 	padding-bottom: 20px;
 }
 
-.people-list img {
+.room-list img {
 	float: left;
 }
 
-.people-list .about {
+.room-list .about {
 	float: left;
 	margin-top: 8px;
 }
 
-.people-list .about {
+.room-list .about {
 	padding-left: 8px;
 }
 
-.people-list .status {
+.room-list .status {
 	color: #92959E;
 }
 

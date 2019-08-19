@@ -11,7 +11,8 @@ export interface IUser extends Document {
     username: string;
     password : string;
     email : string;
-    avatar: Buffer
+    avatar: Buffer;
+    rooms: Array<string>;
     tokens : Array<IUserToken>
     generateAuthToken: () => string
 }
@@ -46,6 +47,9 @@ const UserSchema: Schema = new Schema({
     }, 
     avatar: { 
         type : Buffer, 
+    },
+    rooms: { 
+        type : [{type: String, lowercase: true}], 
     },
     tokens: [{
         token: {

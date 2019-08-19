@@ -170,7 +170,6 @@ UserRouter.patch('/user/me', MiddleWare.verifyToken, async (req, res) => {
  */
 UserRouter.delete('/user/me', MiddleWare.verifyToken, async (req, res) => {
     try {
-        console.log(res.locals.user)
         res.locals.user.remove();
         sendGrid.sendByeEmail(res.locals.user.email, res.locals.user.username);
         res.send();
@@ -192,5 +191,46 @@ UserRouter.get('/user/:_id', MiddleWare.verifyToken, async (req, res) => {
         res.send(user);
     } catch(e) {
         res.status(400).send(e);
+    }
+})
+
+/**
+ * Join a room
+ * @type {POST}
+ * @param {string} room : room to join
+ */
+UserRouter.post('/user/me/join', MiddleWare.verifyToken, async (req, res) => {
+    try {
+        req.body.room = req.body.room.toLowerCase();
+        if(!res.locals.user.rooms.includes(req.body.room)){
+            res.locals.user.rooms.push(req.body.room);
+            res.locals.user.save()
+        }
+        res.send({
+            rooms : res.locals.user.rooms
+        });
+    } catch(e) {
+        res.status(500).send(e);
+    }
+})
+
+
+/**
+ * Join a room
+ * @type {DELETE}
+ * @param {string} room : room to leave
+ */
+UserRouter.delete('/user/me/leave', MiddleWare.verifyToken, async (req, res) => {
+    try {
+        req.body.room = req.body.room.toLowerCase();
+        if(res.locals.user.rooms.includes(req.body.room)){
+            res.locals.user.rooms = res.locals.user.rooms.filter((room: String) => room !== req.body.room);
+            res.locals.user.save();
+        }
+        res.send({
+            rooms : res.locals.user.rooms
+        });
+    } catch(e) {
+        res.status(500).send(e);
     }
 })

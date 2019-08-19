@@ -40,7 +40,7 @@
   },
   "scripts": {
     "start": "node ./build/app/main.js",
-    "build": "tsc",
+    "build": "tsc && handlebars -m ./public/templates/views -f ./build/view.js -k customhelpers.js --extension hbs  && handlebars -m ./public/templates/partials -f ./build/partials.js -k customhelpers.js --extension hbs",
     "test": "./node_modules/.bin/env-cmd -f ./config/test.env jest --watch --runInBand",
     "postinstall": "npm run build",
     "hbs": "handlebars -m ./public/templates/views -f ./public/templates/view.js -k customhelpers.js --extension hbs  && handlebars -m ./public/templates/partials -f ./public/templates/partials.js -k customhelpers.js --extension hbs",
