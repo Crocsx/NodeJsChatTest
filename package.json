@@ -11,6 +11,7 @@
     "express": "^4.17.1",
     "hbs": "^4.0.4",
     "jsonwebtoken": "^8.5.1",
+    "mkdirp": "^0.5.1",
     "mongodb": "^3.2.7",
     "mongoose": "^5.6.4",
     "multer": "^1.4.2",
@@ -40,7 +41,7 @@
   },
   "scripts": {
     "start": "node ./build/app/main.js",
-    "build": "tsc && handlebars -m ./public/templates/views -f ./build/view.js -k customhelpers.js --extension hbs  && handlebars -m ./public/templates/partials -f ./build/partials.js -k customhelpers.js --extension hbs",
+    "build": "tsc && mkdirp ./build/public/templates && handlebars -m ./public/templates/views -f ./build/public/templates/view.js -k customhelpers.js --extension hbs  && handlebars -m ./public/templates/partials -f ./build/public/templates/partials.js -k customhelpers.js --extension hbs",
     "test": "./node_modules/.bin/env-cmd -f ./config/test.env jest --watch --runInBand",
     "postinstall": "npm run build",
     "hbs": "handlebars -m ./public/templates/views -f ./public/templates/view.js -k customhelpers.js --extension hbs  && handlebars -m ./public/templates/partials -f ./public/templates/partials.js -k customhelpers.js --extension hbs",
