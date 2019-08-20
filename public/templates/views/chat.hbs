@@ -8,14 +8,25 @@
             <div class="room-list">
                 <div class="search">
                     <input type="text" placeholder="search" />
-                    <i class="fa fa-search"></i>
+                    <img 
+                        class="fa fa-search"
+                        src="/assets/search.svg" 
+                        alt="triangle with all three sides equal"
+                        height="40px"
+                        width="40px" />
                 </div>
                 <ul class="list" id="room_list">
                     {{!-- {{>chat-room room}} --}}
                 </ul>
                 <div class="search">
                     <input type="text" id="join_room" placeholder="Join Room" />
-                    <i class="fa fa-add"></i>
+                    <img 
+                        id="join_room_button"
+                        class="fa fa-add"
+                        src="/assets/add.svg" 
+                        alt="triangle with all three sides equal"
+                        height="40px"
+                        width="40px" />
                 </div>
             </div>
             <div class="chat">
@@ -26,12 +37,7 @@
    
                     <div class="chat-history">
                         <ul id="chat_container">
-                        {{#if chat.currentRoom}}
-                        {{else}}
-                            <div>
-                                Please join a room
-                            </div>
-                        {{/if}}  
+ 
                         </ul>
                     </div>
                     <div class="chat-message clearfix">

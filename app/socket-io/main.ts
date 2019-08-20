@@ -8,18 +8,19 @@ export const setup = (io: socketio.Server) =>{
         console.log('New websocket Connection');
         io.emit('SERVER:NEW_USER');
     
-        socket.on('USER:SEND_MESSAGE', (message: string, callback: Function) => {
+        socket.on('USER:SEND_MESSAGE', (payload: {message: string, room: string}, callback: Function) => {
             const timestamp = Date.now();
             const filter = new Filter({ placeHolder: '*'});
-            let content = filter.clean(message);
-            socket.broadcast.emit('SERVER:NEW_MESSAGE', {content, timestamp, user: 'Vincent', type: 'MESSAGE'});
+            let content = filter.clean(payload.message);
+            socket.broadcast.emit(`SERVER:NEW_MESSAGE_${payload.room}`, {content, timestamp, user: 'Vincent', type: 'MESSAGE'});
             callback({content, timestamp, user: 'Me', type: 'MESSAGE'});
         })
 
-        socket.on('USER:SEND_LOCATION', (position: any, callback: Function) => {
-            let content = `https://google.com/maps?q=${35.7021},${139.6375}&ie=UTF8&iwloc=&output=embed`;
+        socket.on('USER:SEND_LOCATION', (payload: {coords: {latitude: number, longitude: number}, room: string}, callback: Function) => {
+            console.log(payload)
+            let content = `https://google.com/maps?q=${payload.coords.latitude},${payload.coords.longitude}&ie=UTF8&iwloc=&output=embed`;
             const timestamp = Date.now();
-            socket.broadcast.emit('SERVER:NEW_LOCATION', {content, timestamp, user: 'Me', type: 'LOCATION'});
+            socket.broadcast.emit(`SERVER:NEW_LOCATION_${payload.room}`, {content, timestamp, user: 'Me', type: 'LOCATION'});
             callback({content, timestamp, user: 'Me', type: 'LOCATION'});
         })
     

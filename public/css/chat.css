@@ -42,7 +42,21 @@ body {
 
 .room-list .fa-search {
 	position: relative;
+    left: -25px;
+	top: -35px;
+    width: auto;
+    height: auto;
+	float:right;
+}
+
+.fa-add{
+	float: right !important;
+    top: -35px;
+    position: relative;
+    width: auto;
+    height: auto;
 	left: -25px;
+	cursor: pointer;
 }
 
 .room-list ul {
@@ -263,4 +277,12 @@ ul {
 
 #send_location{
     float:left;
+}
+
+.chat-room{
+	cursor: pointer;
+}
+
+.select-room{
+	border: solid grey 1px;
 }
