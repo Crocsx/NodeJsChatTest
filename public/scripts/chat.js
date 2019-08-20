@@ -85,6 +85,7 @@ export class Chat {
         if($room){
             $room.classList.add('select-room');
         }
+        this._addRoomNotification(room)
         this._addEvents();
     }
 
