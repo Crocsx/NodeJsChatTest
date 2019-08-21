@@ -41,7 +41,7 @@
   },
   "scripts": {
     "start": "node ./build/app/main.js",
-    "build": "tsc && mkdirp ./build/public/templates && handlebars -m ./public/templates/views -f ./build/public/templates/view.js -k customhelpers.js --extension hbs  && handlebars -m ./public/templates/partials -f ./build/public/templates/partials.js -k customhelpers.js --extension hbs",
+    "build": "tsc && npm run hbs && mkdirp ./build/public/templates && cp -R ./public/templates ./build/public",
     "test": "./node_modules/.bin/env-cmd -f ./config/test.env jest --watch --runInBand",
     "postinstall": "npm run build",
     "hbs": "handlebars -m ./public/templates/views -f ./public/templates/view.js -k customhelpers.js --extension hbs  && handlebars -m ./public/templates/partials -f ./public/templates/partials.js -k customhelpers.js --extension hbs",

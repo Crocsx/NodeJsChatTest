@@ -4,7 +4,7 @@ logs
 npm-debug.log*
 
 # specifics
-config/
+config/*.env
 build/
 
 # Runtime data
