@@ -18,7 +18,7 @@ window.addEventListener("load", () => {
     ajax.get('http://localhost:3000/user/me')
     .then((response) => {
         document.getElementById('user_info').innerHTML = `Connected as ${response.username}`;
-        window.chat = new Chat(document.getElementById('chat_container'), document.getElementById('room_list'), response.rooms);
+        window.chat = new Chat(document.getElementById('chat_container'), document.getElementById('message_container'), document.getElementById('room_list'), response.rooms, response.username);
     }).catch((reponse) => {
         window.location.href = '/login';
     })

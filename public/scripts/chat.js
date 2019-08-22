@@ -1,41 +1,46 @@
 export class Chat {
 
-    constructor(messageContainer, roomsContainer, rooms) {
+    constructor(chat, messageContainer, roomsContainer, rooms, username) {
         this._rooms = rooms || new Array();
         this._currentRoom = null;
+        this._$chat = chat;
         this._$messages = messageContainer;
+        this._username = username;
         this._$rooms = roomsContainer;
         this.socket = io();
         this._addEvents();
         this._refreshRooms();
+        if(this._rooms.length > 0){
+            this.selectRoom(this._rooms[0]);
+        }
     }
 
     _addEvents = () => {
-        this.socket.on(`SERVER:NEW_USER_${this._currentRoom}`, () => {
-            this._addUserNotification(true);
+        this.socket.on(`SERVER:USER_JOINED`, ({username, room}) => {
+            this._addUserNotification(username, true);
         });
         
-        this.socket.on(`SERVER:USER_LEFT_${this._currentRoom}`, () => {
-            this._addUserNotification(false);
+        this.socket.on(`SERVER:USER_LEFT`, ({username, room}) => {
+            this._addUserNotification(username, false);
         });
         
-        this.socket.on(`SERVER:NEW_MESSAGE_${this._currentRoom}`, (response) => {
+        this.socket.on(`SERVER:NEW_MESSAGE`, (response) => {
             this._addMessage(response);
         });
     
-        this.socket.on(`SERVER:NEW_LOCATION_${this._currentRoom}`, (response) => {
+        this.socket.on(`SERVER:NEW_LOCATION`, (response) => {
             this._addMessage(response);
         });
     };
 
     _removeEvents = () => {
-        this.socket.removeAllListeners(`SERVER:NEW_USER_${this._currentRoom}`);
+        this.socket.removeAllListeners(`SERVER:NEW_USER`);
         
-        this.socket.removeAllListeners(`SERVER:USER_LEFT_${this._currentRoom}`);
+        this.socket.removeAllListeners(`SERVER:USER_LEFT`);
         
-        this.socket.removeAllListeners(`SERVER:NEW_MESSAGE_${this._currentRoom}`);
+        this.socket.removeAllListeners(`SERVER:NEW_MESSAGE`);
     
-        this.socket.removeAllListeners(`SERVER:NEW_LOCATION_${this._currentRoom}`);
+        this.socket.removeAllListeners(`SERVER:NEW_LOCATION`);
     }
 
     _addMessage = ({timestamp, user, content, type}) => {
@@ -56,18 +61,19 @@ export class Chat {
                 type : type
             }));
         }
+        this._autoScroll();
     }
 
-    _addUserNotification = (isJoin) => {
+    _addUserNotification = (user, isJoin) => {
         if(!this._currentRoom) return;      
         this._$messages.insertAdjacentHTML('beforeend', Handlebars.templates['chat-event']({
-            event : isJoin ? 'User Joined' : ' User Left'
+            event : isJoin ? `${user} Joined` : `${user} Left`
         }));
     }
 
-    _addRoomNotification = (room) => {    
+    _addRoomNotification = (room, isJoin) => {    
         this._$messages.insertAdjacentHTML('beforeend', Handlebars.templates['chat-event']({
-            event : `entered room : ${room}`
+            event : isJoin ? `entered room ${room}` : `left room ${room}`
         }));
     }
 
@@ -85,22 +91,44 @@ export class Chat {
         if($room){
             $room.classList.add('select-room');
         }
-        this._addRoomNotification(room)
-        this._addEvents();
+        this.socket.emit('USER:JOIN_ROOM', { username : this._username, room }, () =>{
+            this._addRoomNotification(room, true);
+        });
     }
 
     _exitRoom(room){
         const $room = document.getElementById(room);
-        if($room){
-            $room.classList.remove('select-room');
+        this.socket.emit('USER:LEAVE_ROOM', { username : this._username, room }, () =>{
+            this._addRoomNotification(room, false);
+            if($room){
+                $room.classList.remove('select-room');
+            }
+        });
+    }
+
+    _autoScroll = () => {
+        const $newMessage = this._$messages.lastElementChild;
+
+        const newMessageStyles = getComputedStyle($newMessage)
+        const newMessageHeight = $newMessage.offsetHeight + parseInt(newMessageStyles.marginBottom) + parseInt(newMessageStyles.paddingBottom);
+
+        const containerStyle = getComputedStyle(this._$messages);
+        const containerMargin = parseInt(containerStyle.marginBottom) + parseInt(containerStyle.paddingBottom);
+
+        const visibleHeight = this._$chat.offsetHeight - containerMargin;
+        const contentHeight = this._$chat.scrollHeight;
+
+        const scrollOffset = this._$chat.scrollTop + visibleHeight;
+        
+        if(contentHeight - newMessageHeight <= scrollOffset) {
+            this._$chat.scrollTop = this._$chat.scrollHeight;
         }
-        this._removeEvents();
     }
 
     joinRoom = (room) => {
         this._rooms.push(room);
-        this._currentRoom = room;   
-        this._refreshRooms();    
+        this._refreshRooms();  
+        this.selectRoom(room);
     }
 
     leaveRoom = (room) => {
@@ -109,7 +137,7 @@ export class Chat {
     }
 
     selectRoom = (room) => {
-        this._exitRoom(this._currentRoom);
+        if(this._currentRoom) this._exitRoom(this._currentRoom);
         this._currentRoom = room;
         this._enterRoom(this._currentRoom);
     }
@@ -121,7 +149,7 @@ export class Chat {
             }
             if(!navigator.geolocation) { return reject('method unavailable'); }
             navigator.geolocation.getCurrentPosition((position) => {
-                let coords = {latitude : position.coords.latitude, longitude : position.coords.longitude};
+                let coords = {username : this._username, latitude : position.coords.latitude, longitude : position.coords.longitude};
                 this.socket.emit(`USER:SEND_LOCATION`, {coords, room : this._currentRoom}, (response) => {
                     this._addMessage(response);
                     resolve();
@@ -135,7 +163,7 @@ export class Chat {
             if(!this._currentRoom){
                 return reject('join room first');
             }
-            this.socket.emit(`USER:SEND_MESSAGE`, {message, room : this._currentRoom}, (message) => {
+            this.socket.emit(`USER:SEND_MESSAGE`, {username : this._username, message, room : this._currentRoom}, (message) => {
                 this._addMessage(message);
                 resolve(message);
             });
